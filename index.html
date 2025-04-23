@@ -19,8 +19,9 @@
                 <h1 class="app-title">Image Coordinate Finder</h1>
                 <p class="app-subtitle">Upload an image and click anywhere to get precise X and Y coordinates</p>
             </div>
+            
             <button id="theme-toggle-btn" class="btn theme-toggle-button" title="Switch Theme">
-                <i class="fas fa-moon"></i> 
+                <i class="fas fa-moon"></i>
             </button>
         </header>
 
@@ -29,13 +30,11 @@
             
             <div id="upload-container" class="upload-container">
                 <div id="unified-input-box" class="unified-input-box" title="Click, drag, or paste an image">
-                    
                     <div class="upload-icon-wrapper">
-                        <span class="upload-icon-emoji">🖼️</span>
+                       <span class="upload-icon">🖼️</span> 
                     </div>
                     <h2 class="upload-title">Upload Your Image</h2>
                     <p class="upload-text">Click or drag to add an image, or paste from clipboard</p>
-                    
                     <div class="upload-methods">
                         <div class="upload-method">
                             <span class="method-icon">📂</span> Click to upload
@@ -53,7 +52,6 @@
                 </div>
                 <input type="file" id="file-input" accept="image/*" aria-hidden="true">
             </div>
-            
 
             
             <div id="image-workspace" class="image-workspace" style="display: none;">
@@ -66,7 +64,7 @@
                     
                     <div id="coordinates" class="card">
                         <h3 class="card-title">
-                            <span class="icon"><i class="fas fa-map-marker-alt"></i></span> Coordinates
+                            <span class="icon">📍</span> Coordinates 
                         </h3>
                         <div class="coordinates-display">
                             <div class="coord-group coord-group-x">
@@ -80,8 +78,7 @@
                             </div>
                         </div>
                         <div class="image-info">
-                            
-                            <span class="icon"><i class="fas fa-ruler-combined"></i></span>
+                            <span class="icon">📏</span> 
                             <span id="image-size">Click on the image to get coordinates</span>
                         </div>
                     </div>
@@ -89,7 +86,7 @@
                     
                     <div id="image-details" class="card">
                         <h3 class="card-title">
-                            <span class="icon"><i class="fas fa-info-circle"></i></span> Image Details
+                            <span class="icon">🔍</span> Image Details 
                         </h3>
                         <ul class="info-list">
                             <li class="info-item">
@@ -119,16 +116,16 @@
                 
                 <div class="control-bar">
                     <button id="copy-info-btn" class="btn btn-primary" title="Copy image details and last coordinates">
-                        <span class="icon"><i class="fas fa-copy"></i></span> Copy Details
+                        <span class="icon">📋</span> Copy Details 
                     </button>
                     <button id="clear-btn" class="btn btn-danger" title="Remove image and start over">
-                        <span class="icon"><i class="fas fa-trash-alt"></i></span> Clear Image
+                        <span class="icon">🗑️</span> Clear Image 
                     </button>
                 </div>
             </div>
-        </main> 
+        </main>
 
-    </div> 
+    </div>
 
     
     <script src="script.js"></script>
