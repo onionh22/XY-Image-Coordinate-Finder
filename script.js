@@ -6,7 +6,6 @@ const uploadContainer = document.getElementById('upload-container');
 const imageWorkspace = document.getElementById('image-workspace');
 const imageContainer = document.getElementById('image-container');
 const image = document.getElementById('image');
-
 const coordXValue = document.getElementById('coord-x-value');
 const coordYValue = document.getElementById('coord-y-value');
 const imageSizeText = document.getElementById('image-size');
@@ -21,6 +20,7 @@ const aspectRatio = document.getElementById('aspect-ratio');
 
 let currentFile = null;
 let lastCoordinates = { x: null, y: null };
+let notificationTimeout; 
 
 function initTheme() {
     const savedTheme = localStorage.getItem('theme');
@@ -32,6 +32,7 @@ function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     const iconClass = theme === 'dark' ? 'fa-sun' : 'fa-moon';
     const title = theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+
     themeToggleBtn.innerHTML = `<i class="fas ${iconClass}"></i>`;
     themeToggleBtn.title = title;
 }
@@ -87,6 +88,9 @@ function handlePaste(e) {
         loadImage(file);
     } else if (file) {
          showNotification('Invalid file type. Please upload an image.');
+         hideLoading(); 
+    } else {
+        hideLoading(); 
     }
      fileInput.value = '';
 }
@@ -104,11 +108,10 @@ function loadImage(file) {
         image.onload = function() {
             hideLoading();
             uploadContainer.style.display = 'none';
-            imageWorkspace.style.display = 'flex'; 
-            imageSizeText.textContent = `Image: ${image.naturalWidth} × ${image.naturalHeight} px`; 
+            imageWorkspace.style.display = 'flex';
+            imageSizeText.textContent = `Image: ${image.naturalWidth} × ${image.naturalHeight} px`;
             resetCoordinatesDisplay();
             updateImageDetails(currentFile, image.naturalWidth, image.naturalHeight);
-
             setTimeout(() => showNotification('Image loaded! Click anywhere to get coordinates.'), 100);
         };
          image.onerror = function() {
@@ -142,32 +145,27 @@ function handleImageClick(e) {
     const x = Math.max(0, Math.min(image.naturalWidth, Math.round(clickXRelative * scaleX)));
     const y = Math.max(0, Math.min(image.naturalHeight, Math.round(clickYRelative * scaleY)));
 
-    animateCoordinateUpdate(coordXValue, ` ${x}`); 
+    animateCoordinateUpdate(coordXValue, ` ${x}`);
     animateCoordinateUpdate(coordYValue, ` ${y}`);
     lastCoordinates = { x, y };
 
     const marker = document.createElement('div');
     marker.className = 'click-marker';
-
     marker.style.left = `${clickXRelative}px`;
     marker.style.top = `${clickYRelative}px`;
     imageContainer.appendChild(marker);
 }
 
 function animateCoordinateUpdate(element, newValue) {
-    if (element.textContent.trim() === newValue.trim()) return; 
+    if (!element || element.textContent.trim() === newValue.trim()) return;
 
     element.classList.remove('coordinate-value-updated');
-
     void element.offsetWidth;
-
     element.textContent = newValue;
-
     element.classList.add('coordinate-value-updated');
-
     element.addEventListener('animationend', () => {
         element.classList.remove('coordinate-value-updated');
-    }, { once: true }); 
+    }, { once: true });
 }
 
 function resetCoordinatesDisplay() {
@@ -176,7 +174,6 @@ function resetCoordinatesDisplay() {
     lastCoordinates = { x: null, y: null };
     imageSizeText.textContent = 'Click on the image to get coordinates';
     document.querySelectorAll('.click-marker').forEach(marker => marker.remove());
-
      coordXValue.classList.remove('coordinate-value-updated');
      coordYValue.classList.remove('coordinate-value-updated');
 }
@@ -185,28 +182,25 @@ function resetCoordinatesDisplay() {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-
     if (bytes < 1) return `${bytes.toFixed(2)} Bytes`;
-    const i = Math.max(0, Math.floor(Math.log(bytes) / Math.log(k))); 
+    const i = Math.max(0, Math.floor(Math.log(bytes) / Math.log(k)));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 function gcd(a, b) {
-
     a = Math.abs(Math.round(a));
     b = Math.abs(Math.round(b));
     return b === 0 ? a : gcd(b, a % b);
 }
 function calculateAspectRatio(width, height) {
-    if (!width || !height || width <= 0 || height <= 0) return '--'; 
+    if (!width || !height || width <= 0 || height <= 0) return '--';
     const divisor = gcd(width, height);
-
     if (divisor === 0) return '--';
     return `${width / divisor}:${height / divisor}`;
 }
 function updateImageDetails(file, imgWidth, imgHeight) {
     fileName.textContent = file?.name || 'Pasted Image';
     fileType.textContent = file?.type || 'Unknown';
-    fileSize.textContent = file?.size || file?.size === 0 ? formatFileSize(file.size) : '--'; 
+    fileSize.textContent = file?.size || file?.size === 0 ? formatFileSize(file.size) : '--';
     dimensions.textContent = `${imgWidth} × ${imgHeight} px`;
     aspectRatio.textContent = calculateAspectRatio(imgWidth, imgHeight);
 }
@@ -219,7 +213,7 @@ function resetImageDetails() {
 }
 
  function copyImageInfo() {
-     if (!currentFile && lastCoordinates.x === null) { 
+     if (!currentFile && lastCoordinates.x === null) {
          showNotification('No image loaded or coordinates clicked yet.');
          return;
      }
@@ -248,11 +242,10 @@ function resetImageDetails() {
         })
         .catch(err => {
             console.error('Failed to copy text: ', err);
-
             try {
                 const textArea = document.createElement("textarea");
                 textArea.value = imageInfoText.trim();
-                textArea.style.position = "fixed"; 
+                textArea.style.position = "fixed";
                 textArea.style.opacity = "0";
                 document.body.appendChild(textArea);
                 textArea.focus();
@@ -279,15 +272,12 @@ function clearImage() {
     resetImageDetails();
     currentFile = null;
     document.querySelectorAll('.click-marker').forEach(marker => marker.remove());
-    showNotification('Image cleared.'); 
+    showNotification('Image cleared.');
 }
-
-let notificationTimeout; 
 
 function showNotification(message) {
 
     clearTimeout(notificationTimeout);
-
     const existingNotification = document.querySelector('.notification');
     if (existingNotification) {
         existingNotification.remove();
@@ -295,14 +285,28 @@ function showNotification(message) {
 
     const notification = document.createElement('div');
     notification.className = 'notification';
-    notification.innerHTML = `<span class="icon"><i class="fas fa-info-circle"></i></span> <span>${message}</span>`; 
+
+    notification.innerHTML = `
+        <span class="icon"><i class="fas fa-info-circle"></i></span>
+        <span class="notification-message">${message}</span>
+        <button class="notification-close-btn" aria-label="Close notification">×</button>
+    `; 
+
     document.body.appendChild(notification);
+
+    const closeBtn = notification.querySelector('.notification-close-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            clearTimeout(notificationTimeout); 
+            notification.remove(); 
+        });
+    }
 
     notificationTimeout = setTimeout(() => {
         notification.style.opacity = '0';
 
         notification.addEventListener('transitionend', () => notification.remove(), { once: true });
-    }, 3500); 
+    }, 4000); 
 }
 
 themeToggleBtn.addEventListener('click', toggleTheme);
@@ -322,7 +326,7 @@ copyInfoBtn.addEventListener('click', copyImageInfo);
 
 if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        if (!localStorage.getItem('theme')) { 
+        if (!localStorage.getItem('theme')) {
             setTheme(e.matches ? 'dark' : 'light');
         }
     });
