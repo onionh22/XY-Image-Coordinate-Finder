@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Coordinate Identifier</title>
+    <title>Image Coordinate Finder</title>
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -13,110 +13,112 @@
 </head>
 <body>
     <div class="app-container">
+        
         <header class="app-header">
             <div class="header-left">
                 <h1 class="app-title">Image Coordinate Finder</h1>
                 <p class="app-subtitle">Upload an image and click anywhere to get precise X and Y coordinates</p>
             </div>
-
-            
-            <button id="theme-toggle-btn" class="btn theme-toggle-button" title="Switch to Dark Mode">
-                
+            <button id="theme-toggle-btn" class="btn theme-toggle-button" title="Switch Theme">
                 <i class="fas fa-moon"></i>
             </button>
         </header>
 
         
-        <div id="upload-container" class="upload-container">
-            <div id="unified-input-box" class="unified-input-box" title="Click, drag, or paste an image">
-                <div class="upload-icon">🖼️</div>
-                <h2 class="upload-title">Upload Your Image</h2>
-                <p class="upload-text">Click or drag to add an image, or paste from clipboard</p>
-
-                <div class="upload-methods">
-                    <div class="upload-method">
-                        <span class="method-icon">📂</span> Click to upload
+        <main>
+            
+            <div id="upload-container" class="upload-container">
+                <div id="unified-input-box" class="unified-input-box" title="Click, drag, or paste an image">
+                    <div class="upload-icon-wrapper"> 
+                       <i class="fas fa-upload upload-icon-fa"></i> 
                     </div>
-                    <div class="upload-method">
-                        <span class="method-icon">📋</span> Paste (<span class="keyboard-shortcut">Ctrl</span>+<span class="keyboard-shortcut">V</span>)
+                    <h2 class="upload-title">Upload Your Image</h2>
+                    <p class="upload-text">Click or drag to add an image, or paste from clipboard</p>
+                    <div class="upload-methods">
+                        <div class="upload-method">
+                            <span class="method-icon"><i class="fas fa-folder-open"></i></span> Click to upload
+                        </div>
+                        <div class="upload-method">
+                            <span class="method-icon"><i class="fas fa-paste"></i></span> Paste (<span class="keyboard-shortcut">Ctrl</span>+<span class="keyboard-shortcut">V</span>)
+                        </div>
+                        <div class="upload-method">
+                            <span class="method-icon"><i class="fas fa-mouse-pointer"></i></span> Drag & drop
+                        </div>
                     </div>
-                    <div class="upload-method">
-                        <span class="method-icon">🖱️</span> Drag & drop
-                    </div>
-                </div>
-
-                <div class="loading-indicator" id="loading-indicator">
-                    <div class="spinner"></div>
-                </div>
-            </div>
-
-            <input type="file" id="file-input" accept="image/*" aria-hidden="true">
-        </div>
-
-        
-        <div id="image-workspace" class="image-workspace" style="display: none;">
-            <div id="image-container" class="image-container">
-                <img id="image" src="" alt="Uploaded image">
-                
-            </div>
-
-            <div class="info-cards-container">
-                
-                <div id="coordinates" class="card">
-                    <h3 class="card-title">
-                        <span class="icon">📍</span> Coordinates
-                    </h3>
-                    <div class="coordinates-display">
-                        <span class="coordinate-label">X:</span><span id="coord-x-value"> --</span>
-                          |   <span class="coordinate-label">Y:</span><span id="coord-y-value"> --</span>
-                    </div>
-                    <div class="image-info">
-                        <span class="icon">📏</span>
-                        <span id="image-size">Click on the image to get coordinates</span>
+                    <div class="loading-indicator" id="loading-indicator">
+                        <div class="spinner"></div>
                     </div>
                 </div>
-
-                
-                <div id="image-details" class="card">
-                    <h3 class="card-title">
-                        <span class="icon">🔍</span> Image Details
-                    </h3>
-                    <ul class="info-list">
-                        <li class="info-item">
-                            <span class="info-label">File Name:</span>
-                            <span id="file-name" class="info-value">--</span>
-                        </li>
-                        <li class="info-item">
-                            <span class="info-label">File Type:</span>
-                            <span id="file-type" class="info-value">--</span>
-                        </li>
-                        <li class="info-item">
-                            <span class="info-label">File Size:</span>
-                            <span id="file-size" class="info-value">--</span>
-                        </li>
-                        <li class="info-item">
-                            <span class="info-label">Dimensions:</span>
-                            <span id="dimensions" class="info-value">--</span>
-                        </li>
-                        <li class="info-item">
-                            <span class="info-label">Aspect Ratio:</span>
-                            <span id="aspect-ratio" class="info-value">--</span>
-                        </li>
-                    </ul>
-                </div>
+                <input type="file" id="file-input" accept="image/*" aria-hidden="true">
             </div>
 
             
-            <div class="control-bar">
-                <button id="copy-info-btn" class="btn btn-primary" title="Copy image details and last coordinates">
-                    <span class="icon">📋</span> Copy Details
-                </button>
-                <button id="clear-btn" class="btn btn-danger" title="Remove image and start over">
-                    <span class="icon">🗑️</span> Clear Image
-                </button>
+            <div id="image-workspace" class="image-workspace" style="display: none;">
+                <div id="image-container" class="image-container">
+                    <img id="image" src="" alt="Uploaded image">
+                    
+                </div>
+
+                <div class="info-cards-container">
+                    
+                    <div id="coordinates" class="card">
+                        <h3 class="card-title">
+                            <span class="icon"><i class="fas fa-map-marker-alt"></i></span> Coordinates
+                        </h3>
+                        <div class="coordinates-display">
+                            <span class="coordinate-label">X:</span><span id="coord-x-value"> --</span>
+                              |   <span class="coordinate-label">Y:</span><span id="coord-y-value"> --</span>
+                        </div>
+                        <div class="image-info">
+                            <span class="icon"><i class="fas fa-ruler-combined"></i></span>
+                            <span id="image-size">Click on the image to get coordinates</span>
+                        </div>
+                    </div>
+
+                    
+                    <div id="image-details" class="card">
+                        <h3 class="card-title">
+                            <span class="icon"><i class="fas fa-info-circle"></i></span> Image Details
+                        </h3>
+                        <ul class="info-list">
+                            <li class="info-item">
+                                <span class="info-label">File Name:</span>
+                                <span id="file-name" class="info-value">--</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">File Type:</span>
+                                <span id="file-type" class="info-value">--</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">File Size:</span>
+                                <span id="file-size" class="info-value">--</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">Dimensions:</span>
+                                <span id="dimensions" class="info-value">--</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">Aspect Ratio:</span>
+                                <span id="aspect-ratio" class="info-value">--</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                
+                <div class="control-bar">
+                    <button id="copy-info-btn" class="btn btn-primary" title="Copy image details and last coordinates">
+                        <span class="icon"><i class="fas fa-copy"></i></span> Copy Details
+                    </button>
+                    <button id="clear-btn" class="btn btn-danger" title="Remove image and start over">
+                        <span class="icon"><i class="fas fa-trash-alt"></i></span> Clear Image
+                    </button>
+                </div>
             </div>
-        </div>
-    </div>
+        </main> 
+
+    </div> 
+
     
     <script src="script.js"></script>
 </body>
