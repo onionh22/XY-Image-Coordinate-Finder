@@ -88,9 +88,6 @@ function handlePaste(e) {
         loadImage(file);
     } else if (file) {
          showNotification('Invalid file type. Please upload an image.');
-         hideLoading(); 
-    } else {
-        hideLoading(); 
     }
      fileInput.value = '';
 }
@@ -157,7 +154,7 @@ function handleImageClick(e) {
 }
 
 function animateCoordinateUpdate(element, newValue) {
-    if (!element || element.textContent.trim() === newValue.trim()) return;
+    if (element.textContent.trim() === newValue.trim()) return;
 
     element.classList.remove('coordinate-value-updated');
     void element.offsetWidth;
@@ -286,27 +283,35 @@ function showNotification(message) {
     const notification = document.createElement('div');
     notification.className = 'notification';
 
-    notification.innerHTML = `
-        <span class="icon"><i class="fas fa-info-circle"></i></span>
-        <span class="notification-message">${message}</span>
-        <button class="notification-close-btn" aria-label="Close notification">×</button>
-    `; 
+    const content = document.createElement('div');
+    content.className = 'notification-content';
+    content.innerHTML = `<span class="icon">ℹ️</span> <span>${message}</span>`; 
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'notification-close-btn';
+    closeBtn.innerHTML = '×'; 
+    closeBtn.setAttribute('aria-label', 'Close notification');
+    closeBtn.title = 'Close'; 
+
+    closeBtn.addEventListener('click', () => {
+        clearTimeout(notificationTimeout); 
+        notification.style.opacity = '0'; 
+
+        notification.addEventListener('transitionend', () => notification.remove(), { once: true });
+    });
+
+    notification.appendChild(content);
+    notification.appendChild(closeBtn);
 
     document.body.appendChild(notification);
 
-    const closeBtn = notification.querySelector('.notification-close-btn');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-            clearTimeout(notificationTimeout); 
-            notification.remove(); 
-        });
-    }
-
     notificationTimeout = setTimeout(() => {
-        notification.style.opacity = '0';
 
-        notification.addEventListener('transitionend', () => notification.remove(), { once: true });
-    }, 4000); 
+        if (notification.parentNode) {
+            notification.style.opacity = '0';
+            notification.addEventListener('transitionend', () => notification.remove(), { once: true });
+        }
+    }, 5000); 
 }
 
 themeToggleBtn.addEventListener('click', toggleTheme);
@@ -332,4 +337,4 @@ if (window.matchMedia) {
     });
 }
 
-initTheme(); 
+initTheme();
