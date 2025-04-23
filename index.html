@@ -20,7 +20,7 @@
                 <p class="app-subtitle">Upload an image and click anywhere to get precise X and Y coordinates</p>
             </div>
             <button id="theme-toggle-btn" class="btn theme-toggle-button" title="Switch Theme">
-                <i class="fas fa-moon"></i>
+                <i class="fas fa-moon"></i> 
             </button>
         </header>
 
@@ -29,7 +29,7 @@
             
             <div id="upload-container" class="upload-container">
                 <div id="unified-input-box" class="unified-input-box" title="Click, drag, or paste an image">
-                    <div class="upload-icon-wrapper"> 
+                    <div class="upload-icon-wrapper">
                        <i class="fas fa-upload upload-icon-fa"></i> 
                     </div>
                     <h2 class="upload-title">Upload Your Image</h2>
@@ -65,10 +65,19 @@
                         <h3 class="card-title">
                             <span class="icon"><i class="fas fa-map-marker-alt"></i></span> Coordinates
                         </h3>
+                        
                         <div class="coordinates-display">
-                            <span class="coordinate-label">X:</span><span id="coord-x-value"> --</span>
-                              |   <span class="coordinate-label">Y:</span><span id="coord-y-value"> --</span>
+                            <div class="coord-group coord-group-x">
+                                <span class="coordinate-label">X:</span>
+                                <span class="coordinate-value" id="coord-x-value"> --</span>
+                            </div>
+                            <div class="coord-separator">|</div> 
+                            <div class="coord-group coord-group-y">
+                                <span class="coordinate-label">Y:</span>
+                                <span class="coordinate-value" id="coord-y-value"> --</span>
+                            </div>
                         </div>
+                        
                         <div class="image-info">
                             <span class="icon"><i class="fas fa-ruler-combined"></i></span>
                             <span id="image-size">Click on the image to get coordinates</span>
