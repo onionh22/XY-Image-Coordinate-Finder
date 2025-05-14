@@ -216,7 +216,7 @@ function copyCoordinates() {
         return;
     }
 
-    const coordinatesText = `X: ${lastCoordinates.x}, Y: ${lastCoordinates.y}`;
+    const coordinatesText = `${lastCoordinates.x} ${lastCoordinates.y}`;
 
     navigator.clipboard.writeText(coordinatesText)
         .then(() => {
