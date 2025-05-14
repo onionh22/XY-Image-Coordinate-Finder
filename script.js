@@ -10,7 +10,8 @@ const coordXValue = document.getElementById('coord-x-value');
 const coordYValue = document.getElementById('coord-y-value');
 const imageSizeText = document.getElementById('image-size');
 const clearBtn = document.getElementById('clear-btn');
-const copyInfoBtn = document.getElementById('copy-info-btn');
+
+const copyCoordsBtn = document.getElementById('copy-coords-btn');
 const loadingIndicator = document.getElementById('loading-indicator');
 const fileName = document.getElementById('file-name');
 const fileType = document.getElementById('file-type');
@@ -20,7 +21,7 @@ const aspectRatio = document.getElementById('aspect-ratio');
 
 let currentFile = null;
 let lastCoordinates = { x: null, y: null };
-let notificationTimeout; 
+let notificationTimeout;
 
 function initTheme() {
     const savedTheme = localStorage.getItem('theme');
@@ -209,39 +210,23 @@ function resetImageDetails() {
     aspectRatio.textContent = '--';
 }
 
- function copyImageInfo() {
-     if (!currentFile && lastCoordinates.x === null) {
-         showNotification('No image loaded or coordinates clicked yet.');
-         return;
-     }
-    let imageInfoText = "Image Details:\n";
-    if (currentFile) {
-        imageInfoText += `- File Name: ${fileName.textContent}\n`;
-        imageInfoText += `- File Type: ${fileType.textContent}\n`;
-        imageInfoText += `- File Size: ${fileSize.textContent}\n`;
-        imageInfoText += `- Dimensions: ${dimensions.textContent}\n`;
-        imageInfoText += `- Aspect Ratio: ${aspectRatio.textContent}`;
-    } else {
-        imageInfoText += "- No image file loaded.\n";
+function copyCoordinates() {
+    if (lastCoordinates.x === null || lastCoordinates.y === null) {
+        showNotification('No coordinates clicked yet. Click on the image first.');
+        return;
     }
 
-    if (lastCoordinates.x !== null && lastCoordinates.y !== null) {
-        imageInfoText += `\n\nLast Clicked Coordinates:\n`;
-        imageInfoText += `- X: ${lastCoordinates.x}\n`;
-        imageInfoText += `- Y: ${lastCoordinates.y}`;
-    } else {
-         imageInfoText += `\n\n- No coordinates clicked yet.`;
-    }
+    const coordinatesText = `X: ${lastCoordinates.x}, Y: ${lastCoordinates.y}`;
 
-    navigator.clipboard.writeText(imageInfoText.trim())
+    navigator.clipboard.writeText(coordinatesText)
         .then(() => {
-            showNotification('Details copied to clipboard!');
+            showNotification('X, Y coordinates copied to clipboard!');
         })
         .catch(err => {
-            console.error('Failed to copy text: ', err);
+            console.error('Failed to copy coordinates: ', err);
             try {
                 const textArea = document.createElement("textarea");
-                textArea.value = imageInfoText.trim();
+                textArea.value = coordinatesText;
                 textArea.style.position = "fixed";
                 textArea.style.opacity = "0";
                 document.body.appendChild(textArea);
@@ -249,13 +234,14 @@ function resetImageDetails() {
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                showNotification('Details copied to clipboard! (Fallback)');
+                showNotification('X, Y coordinates copied! (Fallback)');
             } catch (execErr) {
                 console.error('Fallback copy failed: ', execErr);
-                showNotification('Error copying details.');
+                showNotification('Error copying coordinates.');
             }
         });
 }
+
 function clearImage() {
     image.src = '';
     image.onload = null;
@@ -327,7 +313,8 @@ document.addEventListener('paste', handlePaste);
 image.addEventListener('click', handleImageClick);
 
 clearBtn.addEventListener('click', clearImage);
-copyInfoBtn.addEventListener('click', copyImageInfo);
+
+copyCoordsBtn.addEventListener('click', copyCoordinates);
 
 if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
